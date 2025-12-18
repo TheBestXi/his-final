@@ -8,7 +8,7 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "medical_records", indexes = {
-    @Index(name = "idx_patient_created", columnList = "pid, created_at"),
+    @Index(name = "idx_patient_created", columnList = "patient_id, created_at"),
     @Index(name = "idx_doctor_created", columnList = "doctor_id, created_at")
 })
 public class MedicalRecord extends BaseEntity {
@@ -17,9 +17,6 @@ public class MedicalRecord extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "record_id")
     private Integer recordId;
-
-    @Column(name = "pid", nullable = false)
-    private Integer pid;
 
     @Column(name = "patient_id", nullable = false)
     private Integer patientId;
@@ -45,11 +42,6 @@ public class MedicalRecord extends BaseEntity {
     @PrePersist
     @PreUpdate
     public void syncPid() {
-        if (this.pid == null && this.patientId != null) {
-            this.pid = this.patientId;
-        }
-        if (this.patientId == null && this.pid != null) {
-            this.patientId = this.pid;
-        }
+        // No redundant sync needed
     }
 }

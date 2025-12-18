@@ -20,7 +20,7 @@ public class PrescriptionService {
     private final PharmacyInventoryService inventoryService;
 
     public List<Prescription> listByPatient(Integer pid) {
-        return prescriptionRepository.findByPid(pid);
+        return prescriptionRepository.findByPatientId(pid);
     }
 
     @Transactional
@@ -36,7 +36,7 @@ public class PrescriptionService {
 
         // 3. 创建处方
         Prescription prescription = new Prescription();
-        prescription.setPid(dto.getPid());
+        prescription.setPatientId(dto.getPid());
         prescription.setDoctorId(dto.getDoctorId());
         prescription.setAppointmentId(dto.getAppointmentId());
         prescription.setMedicineId(dto.getMedicineId());

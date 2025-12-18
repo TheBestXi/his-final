@@ -9,7 +9,7 @@ import path from 'path'
 // https://vitejs.dev/config/
 export default defineConfig(({ command, mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
-  const enableMock = command === 'serve' && env.VITE_USE_MOCK !== 'false'
+  const enableMock = command === 'serve' && env.VITE_USE_MOCK === 'true'
 
   return {
     plugins: [
@@ -22,7 +22,7 @@ export default defineConfig(({ command, mode }) => {
       }),
       viteMockServe({
         mockPath: 'src/mocks',
-        enable: enableMock,
+        enable: enableMock, // Only enable if explicitly set to true
       }),
     ],
     resolve: {
@@ -30,5 +30,15 @@ export default defineConfig(({ command, mode }) => {
         '@': path.resolve(__dirname, 'src'),
       },
     },
+    server: {
+      proxy: {
+        '/api': {
+          target: 'http://localhost:8080',
+          changeOrigin: true,
+          // We do NOT rewrite path because backend @RequestMapping includes /api
+          // If backend was just /auth, we would use: rewrite: (path) => path.replace(/^\/api/, '')
+        }
+      }
+    }
   }
 })

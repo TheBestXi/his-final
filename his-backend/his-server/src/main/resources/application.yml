@@ -20,6 +20,7 @@ spring:
     password: "123456"
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
+    defer-datasource-initialization: true
     hibernate:
       ddl-auto: update
     show-sql: true
@@ -29,6 +30,10 @@ spring:
         dialect: org.hibernate.dialect.MySQL8Dialect
         hbm2ddl:
           charset_name: utf8mb4
+  sql:
+    init:
+      mode: always
+      continue-on-error: true
 
   
 # MinIO Config

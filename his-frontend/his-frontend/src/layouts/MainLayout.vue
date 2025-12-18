@@ -12,16 +12,11 @@
         :collapse="isCollapse"
         router
       >
-<<<<<<< HEAD
         <el-menu-item index="/dashboard">
-=======
-        <el-menu-item index="/">
->>>>>>> b636d06c0cc2129a138e4d0f0e9c17c1de95e9a3
           <el-icon><DataBoard /></el-icon>
           <template #title>首页概览</template>
         </el-menu-item>
 
-<<<<<<< HEAD
         <el-sub-menu v-if="menu.outpatient.length" index="/outpatient">
           <template #title>
             <el-icon><FirstAidKit /></el-icon>
@@ -31,41 +26,20 @@
         </el-sub-menu>
 
         <el-menu-item v-if="menu.patient" index="/patient">
-=======
-        <el-sub-menu index="/outpatient">
-          <template #title>
-            <el-icon><FirstAidKit /></el-icon>
-            <span>门诊管理</span>
-          </template>
-          <el-menu-item index="/outpatient/registration">挂号办理</el-menu-item>
-          <el-menu-item index="/outpatient/history">挂号记录</el-menu-item>
-        </el-sub-menu>
-
-        <el-menu-item index="/patient">
->>>>>>> b636d06c0cc2129a138e4d0f0e9c17c1de95e9a3
           <el-icon><User /></el-icon>
           <template #title>患者管理</template>
         </el-menu-item>
 
-<<<<<<< HEAD
         <el-menu-item v-if="menu.doctor" index="/doctor">
-=======
-        <el-menu-item index="/doctor">
->>>>>>> b636d06c0cc2129a138e4d0f0e9c17c1de95e9a3
           <el-icon><Monitor /></el-icon>
           <template #title>医生工作台</template>
         </el-menu-item>
         
-<<<<<<< HEAD
         <el-menu-item v-if="menu.tech" index="/tech">
-=======
-        <el-menu-item index="/tech">
->>>>>>> b636d06c0cc2129a138e4d0f0e9c17c1de95e9a3
           <el-icon><Aim /></el-icon>
           <template #title>检查检验</template>
         </el-menu-item>
 
-<<<<<<< HEAD
         <el-sub-menu v-if="menu.pharmacy.length" index="/pharmacy">
           <template #title>
             <el-icon><Box /></el-icon>
@@ -75,18 +49,6 @@
         </el-sub-menu>
 
         <el-menu-item v-if="menu.finance" index="/finance">
-=======
-        <el-sub-menu index="/pharmacy">
-          <template #title>
-            <el-icon><Box /></el-icon>
-            <span>药房管理</span>
-          </template>
-          <el-menu-item index="/pharmacy/dispensing">药房发药</el-menu-item>
-          <el-menu-item index="/pharmacy/inventory">药品库存</el-menu-item>
-        </el-sub-menu>
-
-        <el-menu-item index="/finance">
->>>>>>> b636d06c0cc2129a138e4d0f0e9c17c1de95e9a3
           <el-icon><Money /></el-icon>
           <template #title>收费管理</template>
         </el-menu-item>
@@ -105,7 +67,6 @@
           </el-breadcrumb>
         </div>
         <div class="flex items-center space-x-4">
-<<<<<<< HEAD
           <el-dropdown trigger="click">
             <span class="flex items-center space-x-2 cursor-pointer">
               <el-avatar :size="32" class="bg-primary text-white">{{ auth.user?.displayName?.slice(0, 1) || '医' }}</el-avatar>
@@ -118,10 +79,6 @@
               </el-dropdown-menu>
             </template>
           </el-dropdown>
-=======
-          <el-avatar :size="32" class="bg-primary text-white">医</el-avatar>
-          <span class="text-sm font-medium">管理员医生</span>
->>>>>>> b636d06c0cc2129a138e4d0f0e9c17c1de95e9a3
         </div>
       </el-header>
 
@@ -138,11 +95,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-<<<<<<< HEAD
 import { useRoute, useRouter } from 'vue-router'
-=======
-import { useRoute } from 'vue-router'
->>>>>>> b636d06c0cc2129a138e4d0f0e9c17c1de95e9a3
 import {
   DataBoard,
   FirstAidKit,
@@ -154,22 +107,16 @@ import {
   User,
   Aim
 } from '@element-plus/icons-vue'
-<<<<<<< HEAD
 import { useAuthStore } from '@/stores/auth'
 
 const route = useRoute()
 const router = useRouter()
 const auth = useAuthStore()
-=======
-
-const route = useRoute()
->>>>>>> b636d06c0cc2129a138e4d0f0e9c17c1de95e9a3
 const isCollapse = ref(false)
 
 const activeMenu = computed(() => route.path)
 const currentRouteName = computed(() => route.meta.title || '首页概览')
 
-<<<<<<< HEAD
 const roleName = computed(() => {
   const map: Record<string, string> = {
     ADMIN: '管理员',
@@ -177,7 +124,8 @@ const roleName = computed(() => {
     DOCTOR: '医生',
     PHARMACY: '药房',
     FINANCE: '财务',
-    TECH: '检查检验'
+    TECH: '检查检验',
+    PATIENT: '患者'
   }
   return auth.role ? map[auth.role] || auth.role : '未登录'
 })
@@ -189,8 +137,8 @@ const menu = computed(() => {
 
   return {
     outpatient: [
-      { path: '/outpatient/registration', title: '挂号办理', roles: ['ADMIN', 'OUTPATIENT'] },
-      { path: '/outpatient/history', title: '挂号记录', roles: ['ADMIN', 'OUTPATIENT'] }
+      { path: '/outpatient/registration', title: '挂号办理', roles: ['ADMIN', 'OUTPATIENT', 'PATIENT'] },
+      { path: '/outpatient/history', title: '挂号记录', roles: ['ADMIN', 'OUTPATIENT', 'PATIENT'] }
     ].filter(i => has(i.roles)),
     patient: has(['ADMIN', 'OUTPATIENT', 'DOCTOR']),
     doctor: has(['ADMIN', 'DOCTOR']),
@@ -211,11 +159,6 @@ const logout = async () => {
   auth.logout()
   await router.push('/login')
 }
-=======
-const toggleCollapse = () => {
-  isCollapse.value = !isCollapse.value
-}
->>>>>>> b636d06c0cc2129a138e4d0f0e9c17c1de95e9a3
 </script>
 
 <style scoped>

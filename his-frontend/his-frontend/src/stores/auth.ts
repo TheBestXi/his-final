@@ -1,10 +1,14 @@
 import { defineStore } from 'pinia'
 import type { UserRole } from '@/router'
+import request from '@/utils/request'
 
 type AuthUser = {
-  username: string
-  displayName: string
+  userId: number
+  pid: number
+  phone: string
+  name: string
   role: UserRole
+  displayName: string
 }
 
 const TOKEN_KEY = 'his_token'
@@ -35,57 +39,23 @@ export const useAuthStore = defineStore('auth', {
   }),
   getters: {
     isAuthenticated: (s) => !!s.token,
-    role: (s) => s.user?.role
+    role: (s) => s.user?.role,
+    isFiled: (s) => !!s.user?.pid && s.user.pid > 0
   },
   actions: {
-    async login(payload: { username: string; password: string }) {
-      const username = payload.username.trim()
-      const password = payload.password
-
-      const allow =
-        (username === 'admin' && password === 'admin') ||
-        (username === 'outpatient' && password === 'outpatient') ||
-        (username === 'doctor' && password === 'doctor') ||
-        (username === 'pharmacy' && password === 'pharmacy') ||
-        (username === 'finance' && password === 'finance') ||
-        (username === 'tech' && password === 'tech')
-
-      if (!allow) {
-        throw new Error('用户名或密码错误')
-      }
-
-      const roleMap: Record<string, UserRole> = {
-        admin: 'ADMIN',
-        outpatient: 'OUTPATIENT',
-        doctor: 'DOCTOR',
-        pharmacy: 'PHARMACY',
-        finance: 'FINANCE',
-        tech: 'TECH'
-      }
-
-      const role = roleMap[username] || 'ADMIN'
-
-      const displayName =
-        role === 'ADMIN'
-          ? '管理员'
-          : role === 'OUTPATIENT'
-            ? '挂号/收费'
-            : role === 'DOCTOR'
-              ? '医生'
-              : role === 'PHARMACY'
-                ? '药房'
-                : role === 'FINANCE'
-                  ? '财务'
-                  : '检查检验'
-
-      const user: AuthUser = { username, displayName, role }
-      const token = `mock-${role}-${Date.now()}`
-
-      this.token = token
-      this.user = user
-      localStorage.setItem(TOKEN_KEY, token)
-      writeUser(user)
+    login(userData: User) {
+      this.user = userData
+      this.token = userData.token || ''
+      this.role = 'PATIENT' // Default to Patient for this flow
+      localStorage.setItem('token', this.token)
+      localStorage.setItem('user', JSON.stringify(this.user))
     },
+    
+    updateUser(userData: User) {
+        this.user = { ...this.user, ...userData }
+        localStorage.setItem('user', JSON.stringify(this.user))
+    },
+    
     logout() {
       this.token = ''
       this.user = null
@@ -94,4 +64,3 @@ export const useAuthStore = defineStore('auth', {
     }
   }
 })
-

@@ -25,7 +25,7 @@ public class AppointmentService {
 
     public List<Appointment> listByPatient(Integer pid) {
         try {
-            return appointmentRepository.findByPidOrPatientId(pid, pid);
+            return appointmentRepository.findByPatientId(pid);
         } catch (Exception e) {
             throw new BusinessException(500, "查询挂号记录失败: " + e.getMessage());
         }
@@ -40,15 +40,29 @@ public class AppointmentService {
         // 2. 校验医生是否存在
         Doctor doctor = doctorRepository.findById(dto.getDoctorId())
                 .orElseThrow(() -> new BusinessException("医生不存在"));
+        
+        // 校验号源 (Total)
+        long used = appointmentRepository.countByDoctorIdAndRegistrationDate(doctor.getDoctorId(), dto.getRegistrationDate());
+        if (used >= doctor.getDailyQuota()) {
+            throw new BusinessException("该医生今日号源已约满");
+        }
+        
+        // 校验号源 (Slot)
+        if (dto.getTimeSlot() != null) {
+            long slotUsed = appointmentRepository.countByDoctorIdAndRegistrationDateAndTimeSlot(
+                doctor.getDoctorId(), dto.getRegistrationDate(), dto.getTimeSlot());
+            if (slotUsed >= 5) { // Hardcoded 5 matching DoctorService
+                throw new BusinessException("该时段已约满");
+            }
+        }
 
-        // 3. 创建挂号单
         Appointment appointment = new Appointment();
-        appointment.setPid(patient.getPid());
-        appointment.setPatientId(patient.getPid());
+        appointment.setPatientId(patient.getPatientId());
         appointment.setDoctorId(doctor.getDoctorId());
         appointment.setDepartment(dto.getDepartment());
         appointment.setRegistrationDate(dto.getRegistrationDate());
         appointment.setRegistrationTime(LocalTime.now());
+        appointment.setTimeSlot(dto.getTimeSlot()); // Save slot
         appointment.setRegistrationFee(dto.getRegistrationFee());
         appointment.setStatus(1); // 1=待就诊
 
@@ -68,13 +82,26 @@ public class AppointmentService {
         Doctor doctor = doctorRepository.findById(dto.getDoctorId())
             .orElseThrow(() -> new BusinessException("医生不存在"));
 
+        long used = appointmentRepository.countByDoctorIdAndRegistrationDate(doctor.getDoctorId(), dto.getRegistrationDate());
+        if (used >= doctor.getDailyQuota()) {
+            throw new BusinessException("该医生今日号源已约满");
+        }
+
+        if (dto.getTimeSlot() != null) {
+            long slotUsed = appointmentRepository.countByDoctorIdAndRegistrationDateAndTimeSlot(
+                doctor.getDoctorId(), dto.getRegistrationDate(), dto.getTimeSlot());
+            if (slotUsed >= 5) {
+                throw new BusinessException("该时段已约满");
+            }
+        }
+
         Appointment appointment = new Appointment();
-        appointment.setPid(patient.getPid());
-        appointment.setPatientId(patient.getPid());
+        appointment.setPatientId(patient.getPatientId());
         appointment.setDoctorId(doctor.getDoctorId());
         appointment.setDepartment(dto.getDepartment());
         appointment.setRegistrationDate(dto.getRegistrationDate());
         appointment.setRegistrationTime(LocalTime.now());
+        appointment.setTimeSlot(dto.getTimeSlot());
         appointment.setRegistrationFee(dto.getRegistrationFee());
         appointment.setStatus(1);
         return appointmentRepository.save(appointment);

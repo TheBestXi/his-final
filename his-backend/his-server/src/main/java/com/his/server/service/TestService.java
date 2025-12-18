@@ -17,7 +17,7 @@ public class TestService {
     private final TestRepository testRepository;
 
     public List<Test> listByPatient(Integer pid) {
-        return testRepository.findByPid(pid);
+        return testRepository.findByPatientId(pid);
     }
 
     public List<Test> listByAppointment(Integer appointmentId) {
@@ -27,7 +27,7 @@ public class TestService {
     @Transactional
     public Test createTest(TestDTO dto) {
         Test test = new Test();
-        test.setPid(dto.getPid());
+        test.setPatientId(dto.getPid());
         test.setDoctorId(dto.getDoctorId());
         test.setAppointmentId(dto.getAppointmentId());
         test.setTestType(dto.getTestType());

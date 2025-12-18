@@ -8,6 +8,6 @@ import java.util.List;
 
 @Repository
 public interface MedicalRecordRepository extends JpaRepository<MedicalRecord, Integer> {
-    List<MedicalRecord> findByPid(Integer pid);
+    List<MedicalRecord> findByPatientId(Integer patientId);
     List<MedicalRecord> findByAppointmentId(Integer appointmentId);
 }

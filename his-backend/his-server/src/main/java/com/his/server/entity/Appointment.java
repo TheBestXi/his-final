@@ -14,7 +14,7 @@ import java.time.LocalTime;
 @Entity
 @Table(name = "appointments", indexes = {
     @Index(name = "idx_reg_date_dept_status", columnList = "registration_date, department, status"),
-    @Index(name = "idx_patient_reg_date", columnList = "pid, registration_date"),
+    @Index(name = "idx_patient_reg_date", columnList = "patient_id, registration_date"),
     @Index(name = "idx_doctor_status", columnList = "doctor_id, status")
 })
 public class Appointment extends BaseEntity {
@@ -23,9 +23,6 @@ public class Appointment extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "appointment_id")
     private Integer appointmentId;
-
-    @Column(name = "pid", nullable = false)
-    private Integer pid;
 
     @Column(name = "patient_id", nullable = false)
     private Integer patientId;
@@ -41,6 +38,9 @@ public class Appointment extends BaseEntity {
 
     @Column(name = "registration_time", nullable = false)
     private LocalTime registrationTime;
+
+    @Column(name = "time_slot", length = 20)
+    private String timeSlot;
 
     @Column(name = "registration_fee", nullable = false, precision = 10, scale = 2)
     private BigDecimal registrationFee;
@@ -60,11 +60,6 @@ public class Appointment extends BaseEntity {
     @PrePersist
     @PreUpdate
     public void syncPid() {
-        if (this.pid == null && this.patientId != null) {
-            this.pid = this.patientId;
-        }
-        if (this.patientId == null && this.pid != null) {
-            this.patientId = this.pid;
-        }
+        // No redundant sync needed
     }
 }

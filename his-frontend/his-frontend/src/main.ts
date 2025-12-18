@@ -6,10 +6,7 @@ import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import './styles/index.scss'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
-<<<<<<< HEAD
 import { useAuthStore } from './stores/auth'
-=======
->>>>>>> b636d06c0cc2129a138e4d0f0e9c17c1de95e9a3
 
 const app = createApp(App)
 
@@ -18,7 +15,6 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 }
 
 app.use(pinia)
-<<<<<<< HEAD
 
 router.beforeEach((to) => {
   const auth = useAuthStore()
@@ -48,8 +44,6 @@ router.afterEach((to) => {
   document.title = `${title} - HIS`
 })
 
-=======
->>>>>>> b636d06c0cc2129a138e4d0f0e9c17c1de95e9a3
 app.use(router)
 app.use(ElementPlus)
 

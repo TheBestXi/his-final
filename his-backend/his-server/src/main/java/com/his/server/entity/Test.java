@@ -11,7 +11,7 @@ import java.time.LocalDate;
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "tests", indexes = {
-    @Index(name = "idx_patient_date", columnList = "pid, test_date"),
+    @Index(name = "idx_patient_date", columnList = "patient_id, test_date"),
     @Index(name = "idx_doctor_type", columnList = "doctor_id, test_type"),
     @Index(name = "idx_status_date", columnList = "status, test_date")
 })
@@ -21,9 +21,6 @@ public class Test extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "test_id")
     private Integer testId;
-
-    @Column(name = "pid", nullable = false)
-    private Integer pid;
 
     @Column(name = "patient_id", nullable = false)
     private Integer patientId;
@@ -52,11 +49,6 @@ public class Test extends BaseEntity {
     @PrePersist
     @PreUpdate
     public void syncPid() {
-        if (this.pid == null && this.patientId != null) {
-            this.pid = this.patientId;
-        }
-        if (this.patientId == null && this.pid != null) {
-            this.patientId = this.pid;
-        }
+        // No redundant sync needed
     }
 }

@@ -8,6 +8,6 @@ import java.util.List;
 
 @Repository
 public interface TestRepository extends JpaRepository<Test, Integer> {
-    List<Test> findByPid(Integer pid);
+    List<Test> findByPatientId(Integer patientId);
     List<Test> findByAppointmentId(Integer appointmentId);
 }

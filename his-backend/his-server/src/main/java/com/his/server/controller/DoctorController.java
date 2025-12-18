@@ -20,8 +20,11 @@ public class DoctorController {
 
     @Operation(summary = "查询医生列表(可按科室筛选)")
     @GetMapping
-    public GlobalResult<List<Doctor>> list(@RequestParam(value = "department", required = false) String department) {
-        return GlobalResult.success(doctorService.list(department));
+    public GlobalResult<List<Doctor>> list(
+            @RequestParam(value = "department", required = false) String department,
+            @RequestParam(value = "date", required = false) java.time.LocalDate date
+    ) {
+        return GlobalResult.success(doctorService.list(department, date));
     }
 
     @Operation(summary = "添加医生")

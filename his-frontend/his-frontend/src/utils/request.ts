@@ -1,29 +1,21 @@
 import axios from 'axios'
-<<<<<<< HEAD
 import type { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
 import { ElMessage } from 'element-plus'
+import { useAuthStore } from '@/stores/auth'
 
 const service: AxiosInstance = axios.create({
-=======
-import { ElMessage } from 'element-plus'
-
-const service = axios.create({
->>>>>>> b636d06c0cc2129a138e4d0f0e9c17c1de95e9a3
   baseURL: import.meta.env.VITE_API_URL || '/api',
   timeout: 5000
 })
 
 service.interceptors.request.use(
   (config) => {
-<<<<<<< HEAD
-    const token = localStorage.getItem('his_token')
+    const authStore = useAuthStore()
+    const token = authStore.token
     if (token) {
       config.headers = config.headers || {}
       config.headers.Authorization = `Bearer ${token}`
     }
-=======
-    // Add token here if needed
->>>>>>> b636d06c0cc2129a138e4d0f0e9c17c1de95e9a3
     return config
   },
   (error) => {
@@ -32,11 +24,7 @@ service.interceptors.request.use(
 )
 
 service.interceptors.response.use(
-<<<<<<< HEAD
   (response: AxiosResponse) => {
-=======
-  (response) => {
->>>>>>> b636d06c0cc2129a138e4d0f0e9c17c1de95e9a3
     const res = response.data
     // If using mock, sometimes it returns data directly or wrapped
     if (res.code === 200) {
@@ -56,13 +44,9 @@ service.interceptors.response.use(
   }
 )
 
-<<<<<<< HEAD
 // Wrapper to type the return value correctly (since interceptor unwraps it)
 const request = <T = any>(config: AxiosRequestConfig): Promise<T> => {
   return service.request<any, T>(config)
 }
 
 export default request
-=======
-export default service
->>>>>>> b636d06c0cc2129a138e4d0f0e9c17c1de95e9a3

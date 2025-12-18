@@ -11,5 +11,6 @@ public class AppointmentDTO {
     private Integer doctorId;
     private String department;
     private LocalDate registrationDate;
+    private String timeSlot;
     private BigDecimal registrationFee;
 }

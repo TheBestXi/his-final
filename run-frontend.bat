@@ -28,7 +28,7 @@ if errorlevel 1 (
   exit /b 1
 )
 
-set "VITE_USE_MOCK=true"
+set "VITE_USE_MOCK=false"
 
 if not exist "node_modules\" (
   echo Installing dependencies...

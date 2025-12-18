@@ -4,6 +4,7 @@ import com.his.common.result.GlobalResult;
 import com.his.server.dto.AuthLoginDTO;
 import com.his.server.dto.AuthRegisterDTO;
 import com.his.server.dto.AuthUserVO;
+import com.his.server.entity.Patient;
 import com.his.server.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -35,6 +36,29 @@ public class AuthController {
         session.setAttribute(SESSION_PID_KEY, vo.getPid());
         
         // Generate Token
+        String token = jwtUtils.generateToken(vo.getUserId(), vo.getPid(), vo.getPhone());
+        vo.setToken(token);
+        
+        return GlobalResult.success(vo);
+    }
+
+    @Operation(summary = "补全/新建患者档案")
+    @PostMapping("/create-file")
+    public GlobalResult<AuthUserVO> createPatientFile(@RequestBody Patient patient, HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        Integer uid = null;
+        if (session != null) {
+            uid = (Integer) session.getAttribute(SESSION_UID_KEY);
+        }
+        
+        if (uid == null) {
+             return GlobalResult.error(401, "未登录");
+        }
+        
+        AuthUserVO vo = authService.createPatientFile(uid, patient);
+        session.setAttribute(SESSION_PID_KEY, vo.getPid());
+        
+        // Refresh Token
         String token = jwtUtils.generateToken(vo.getUserId(), vo.getPid(), vo.getPhone());
         vo.setToken(token);
         
@@ -79,5 +103,23 @@ public class AuthController {
         data.put("userId", uid);
         data.put("pid", pid);
         return GlobalResult.success(data);
+    }
+
+    @Operation(summary = "绑定患者档案")
+    @PostMapping("/bind-patient")
+    public GlobalResult<Void> bindPatient(@RequestParam("pid") Integer pid, HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        Integer uid = null;
+        if (session != null) {
+            uid = (Integer) session.getAttribute(SESSION_UID_KEY);
+        }
+        
+        if (uid == null) {
+             return GlobalResult.error(401, "未登录");
+        }
+        
+        authService.bindPatient(uid, pid);
+        session.setAttribute(SESSION_PID_KEY, pid); // Update session
+        return GlobalResult.success();
     }
 }

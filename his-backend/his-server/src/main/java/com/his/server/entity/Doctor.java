@@ -29,4 +29,13 @@ public class Doctor extends BaseEntity {
 
     @Column(length = 20)
     private String phone;
+
+    @Column(name = "daily_quota", nullable = false)
+    private Integer dailyQuota = 50;
+
+    @Transient
+    private Integer remainingQuota;
+
+    @Transient
+    private java.util.Map<String, Integer> slotAvailability;
 }

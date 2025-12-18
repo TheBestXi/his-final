@@ -16,7 +16,7 @@ public class MedicalRecordService {
     private final MedicalRecordRepository medicalRecordRepository;
 
     public List<MedicalRecord> listByPatient(Integer pid) {
-        return medicalRecordRepository.findByPid(pid);
+        return medicalRecordRepository.findByPatientId(pid);
     }
 
     public List<MedicalRecord> listByAppointment(Integer appointmentId) {
@@ -26,7 +26,7 @@ public class MedicalRecordService {
     @Transactional
     public MedicalRecord createMedicalRecord(MedicalRecordDTO dto) {
         MedicalRecord record = new MedicalRecord();
-        record.setPid(dto.getPid());
+        record.setPatientId(dto.getPid());
         record.setDoctorId(dto.getDoctorId());
         record.setAppointmentId(dto.getAppointmentId());
         record.setChiefComplaint(dto.getChiefComplaint());

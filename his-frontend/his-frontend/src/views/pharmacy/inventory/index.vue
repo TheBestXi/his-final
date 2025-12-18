@@ -8,26 +8,15 @@
     </template>
     
     <el-table :data="inventory" border stripe style="width: 100%">
-<<<<<<< HEAD
       <el-table-column prop="id" label="ID" width="60" />
       <el-table-column prop="medicineName" label="药品名称" />
-=======
-      <el-table-column prop="medicineId" label="ID" width="60" />
-      <el-table-column prop="name" label="药品名称" />
->>>>>>> b636d06c0cc2129a138e4d0f0e9c17c1de95e9a3
       <el-table-column prop="category" label="分类" width="100" />
       <el-table-column prop="specification" label="规格" />
       <el-table-column prop="manufacturer" label="生产厂家" />
       <el-table-column prop="price" label="单价 (¥)" width="100" />
-<<<<<<< HEAD
       <el-table-column prop="stockQuantity" label="库存" width="100">
         <template #default="{ row }">
           <el-tag :type="row.stockQuantity < 10 ? 'danger' : 'success'">{{ row.stockQuantity }} {{ row.unit }}</el-tag>
-=======
-      <el-table-column prop="quantity" label="库存" width="100">
-        <template #default="{ row }">
-          <el-tag :type="row.quantity < 10 ? 'danger' : 'success'">{{ row.quantity }} {{ row.unit }}</el-tag>
->>>>>>> b636d06c0cc2129a138e4d0f0e9c17c1de95e9a3
         </template>
       </el-table-column>
       <el-table-column prop="expirationDate" label="有效期至" width="120">
@@ -53,11 +42,7 @@
     <el-dialog v-model="dialogVisible" :title="isEdit ? '编辑药品' : '新增药品'" width="50%">
       <el-form :model="form" label-width="100px">
         <el-form-item label="药品名称">
-<<<<<<< HEAD
           <el-input v-model="form.medicineName" />
-=======
-          <el-input v-model="form.name" />
->>>>>>> b636d06c0cc2129a138e4d0f0e9c17c1de95e9a3
         </el-form-item>
         <el-form-item label="分类">
           <el-input v-model="form.category" placeholder="如: 抗生素, 解热镇痛" />
@@ -72,11 +57,7 @@
           <el-input-number v-model="form.price" :precision="2" :step="0.1" />
         </el-form-item>
         <el-form-item label="库存数量">
-<<<<<<< HEAD
           <el-input-number v-model="form.stockQuantity" :min="0" />
-=======
-          <el-input-number v-model="form.quantity" :min="0" />
->>>>>>> b636d06c0cc2129a138e4d0f0e9c17c1de95e9a3
         </el-form-item>
         <el-form-item label="单位">
           <el-input v-model="form.unit" placeholder="如: 盒, 瓶" />
@@ -125,11 +106,7 @@ const getExpiryStatus = (dateStr: string) => {
 
 const handleAdd = () => {
   isEdit.value = false
-<<<<<<< HEAD
   form.value = { stockQuantity: 0, price: 0 }
-=======
-  form.value = { quantity: 0, price: 0 }
->>>>>>> b636d06c0cc2129a138e4d0f0e9c17c1de95e9a3
   dialogVisible.value = true
 }
 
@@ -140,37 +117,22 @@ const handleEdit = (row: InventoryItem) => {
 }
 
 const handleDelete = (row: InventoryItem) => {
-<<<<<<< HEAD
   ElMessageBox.confirm(`确认删除 ${row.medicineName} ?`, '警告', {
-=======
-  ElMessageBox.confirm(`确认删除 ${row.name} ?`, '警告', {
->>>>>>> b636d06c0cc2129a138e4d0f0e9c17c1de95e9a3
     confirmButtonText: '删除',
     cancelButtonText: '取消',
     type: 'warning'
   }).then(async () => {
-<<<<<<< HEAD
     if (row.id) {
       await deleteMedicine(row.id)
       ElMessage.success('删除成功')
       loadData()
     }
-=======
-    await deleteMedicine(row.medicineId)
-    ElMessage.success('删除成功')
-    loadData()
->>>>>>> b636d06c0cc2129a138e4d0f0e9c17c1de95e9a3
   })
 }
 
 const submitForm = async () => {
-<<<<<<< HEAD
   if (isEdit.value && form.value.id) {
     await updateMedicine(form.value.id, form.value)
-=======
-  if (isEdit.value && form.value.medicineId) {
-    await updateMedicine(form.value.medicineId, form.value)
->>>>>>> b636d06c0cc2129a138e4d0f0e9c17c1de95e9a3
     ElMessage.success('更新成功')
   } else {
     await addMedicine(form.value)

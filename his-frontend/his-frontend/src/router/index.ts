@@ -2,8 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import type { RouteRecordRaw } from 'vue-router'
 import MainLayout from '../layouts/MainLayout.vue'
 
-<<<<<<< HEAD
-export type UserRole = 'ADMIN' | 'OUTPATIENT' | 'DOCTOR' | 'PHARMACY' | 'FINANCE' | 'TECH'
+export type UserRole = 'ADMIN' | 'OUTPATIENT' | 'DOCTOR' | 'PHARMACY' | 'FINANCE' | 'TECH' | 'PATIENT'
 
 declare module 'vue-router' {
   interface RouteMeta {
@@ -32,112 +31,111 @@ const routes: Array<RouteRecordRaw> = [
         name: 'Dashboard',
         component: () => import('../views/dashboard/index.vue'),
         meta: { title: '首页概览', requiresAuth: true, roles: ['ADMIN', 'OUTPATIENT', 'DOCTOR', 'PHARMACY', 'FINANCE', 'TECH'] }
-=======
-const routes: Array<RouteRecordRaw> = [
-  {
-    path: '/',
-    component: MainLayout,
-    children: [
-      {
-        path: '',
-        name: 'Dashboard',
-        component: () => import('../views/dashboard/index.vue'),
-        meta: { title: 'Dashboard' }
->>>>>>> b636d06c0cc2129a138e4d0f0e9c17c1de95e9a3
       },
       // Outpatient
       {
         path: 'outpatient/registration',
         name: 'Registration',
         component: () => import('../views/outpatient/registration/index.vue'),
-<<<<<<< HEAD
-        meta: { title: '挂号办理', requiresAuth: true, roles: ['ADMIN', 'OUTPATIENT'] }
-=======
-        meta: { title: '挂号办理' }
->>>>>>> b636d06c0cc2129a138e4d0f0e9c17c1de95e9a3
+        meta: { title: '挂号办理', requiresAuth: true, roles: ['ADMIN', 'OUTPATIENT', 'PATIENT'] }
       },
       {
         path: 'outpatient/history',
         name: 'RegistrationHistory',
         component: () => import('../views/outpatient/history/index.vue'),
-<<<<<<< HEAD
-        meta: { title: '挂号记录', requiresAuth: true, roles: ['ADMIN', 'OUTPATIENT'] }
-=======
-        meta: { title: '挂号记录' }
->>>>>>> b636d06c0cc2129a138e4d0f0e9c17c1de95e9a3
+        meta: { title: '挂号记录', requiresAuth: true, roles: ['ADMIN', 'OUTPATIENT', 'PATIENT'] }
       },
       // Patient
       {
         path: 'patient',
         name: 'Patient',
         component: () => import('../views/patient/index.vue'),
-<<<<<<< HEAD
         meta: { title: '患者管理', requiresAuth: true, roles: ['ADMIN', 'OUTPATIENT', 'DOCTOR'] }
-=======
-        meta: { title: '患者管理' }
->>>>>>> b636d06c0cc2129a138e4d0f0e9c17c1de95e9a3
+      },
+      // Create File (New)
+      {
+        path: 'patient/create-file',
+        name: 'CreateFile',
+        component: () => import('../views/patient/create-file/index.vue'),
+        meta: { title: '患者建档', requiresAuth: true, roles: ['ADMIN', 'OUTPATIENT', 'DOCTOR', 'PHARMACY', 'FINANCE', 'TECH', 'PATIENT'] }
       },
       // Doctor
       {
         path: 'doctor',
         name: 'DoctorStation',
         component: () => import('../views/doctor/index.vue'),
-<<<<<<< HEAD
         meta: { title: '医生工作台', requiresAuth: true, roles: ['ADMIN', 'DOCTOR'] }
-=======
-        meta: { title: '医生工作台' }
->>>>>>> b636d06c0cc2129a138e4d0f0e9c17c1de95e9a3
       },
       // Tech
       {
         path: 'tech',
         name: 'Tech',
         component: () => import('../views/tech/index.vue'),
-<<<<<<< HEAD
         meta: { title: '检查检验', requiresAuth: true, roles: ['ADMIN', 'TECH', 'DOCTOR'] }
-=======
-        meta: { title: '检查检验' }
->>>>>>> b636d06c0cc2129a138e4d0f0e9c17c1de95e9a3
       },
       // Pharmacy
       {
         path: 'pharmacy/dispensing',
         name: 'Dispensing',
         component: () => import('../views/pharmacy/dispensing/index.vue'),
-<<<<<<< HEAD
         meta: { title: '药房发药', requiresAuth: true, roles: ['ADMIN', 'PHARMACY'] }
-=======
-        meta: { title: '药房发药' }
->>>>>>> b636d06c0cc2129a138e4d0f0e9c17c1de95e9a3
       },
       {
         path: 'pharmacy/inventory',
         name: 'Inventory',
         component: () => import('../views/pharmacy/inventory/index.vue'),
-<<<<<<< HEAD
         meta: { title: '药品库存', requiresAuth: true, roles: ['ADMIN', 'PHARMACY'] }
-=======
-        meta: { title: '药品库存' }
->>>>>>> b636d06c0cc2129a138e4d0f0e9c17c1de95e9a3
       },
       // Finance
       {
         path: 'finance',
         name: 'Finance',
         component: () => import('../views/finance/index.vue'),
-<<<<<<< HEAD
         meta: { title: '收费管理', requiresAuth: true, roles: ['ADMIN', 'FINANCE', 'OUTPATIENT'] }
-=======
-        meta: { title: '收费管理' }
->>>>>>> b636d06c0cc2129a138e4d0f0e9c17c1de95e9a3
       }
     ]
   }
 ]
 
+import { useAuthStore } from '@/stores/auth'
+import { ElMessage } from 'element-plus'
+
 const router = createRouter({
   history: createWebHistory(),
   routes
+})
+
+router.beforeEach((to, from, next) => {
+  const auth = useAuthStore()
+  const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
+  const publicPages = ['/login']
+  const authRequired = !publicPages.includes(to.path)
+
+  if (authRequired && !auth.token) {
+    return next('/login')
+  }
+
+  // Check Role
+  if (to.meta.roles && auth.role) {
+      if (!(to.meta.roles as string[]).includes(auth.role)) {
+          ElMessage.error('无权访问')
+          return next(from.path || '/')
+      }
+  }
+
+  // Patient Filing Check
+  if (auth.role === 'PATIENT' && to.path !== '/login') {
+      const isFiled = auth.user?.pid && auth.user.pid > 0
+      if (!isFiled && to.path !== '/patient/create-file') {
+          ElMessage.warning('请先完善患者档案')
+          return next('/patient/create-file')
+      }
+      if (isFiled && to.path === '/patient/create-file') {
+          return next('/outpatient/registration')
+      }
+  }
+
+  next()
 })
 
 export default router

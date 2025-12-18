@@ -46,23 +46,50 @@ public class AuthService {
 
         Patient patient = new Patient();
         patient.setName(dto.getName().trim());
+        patient.setIdCard(dto.getIdCard());
         patient.setGender(dto.getGender());
         patient.setAge(dto.getAge());
         patient.setPhone(phone);
         patient.setAddress(dto.getAddress());
-        patient.setAllergy(dto.getAllergy());
+        patient.setAllergyHistory(dto.getAllergy());
         Patient savedPatient = patientRepository.save(patient);
 
         UserAccount user = new UserAccount();
-        user.setPid(savedPatient.getPid());
+        user.setPatientId(savedPatient.getPatientId());
         user.setPhone(phone);
         user.setPasswordHash(passwordEncoder.encode(dto.getPassword()));
         UserAccount savedUser = userAccountRepository.save(user);
 
         AuthUserVO vo = new AuthUserVO();
         vo.setUserId(savedUser.getUserId());
-        vo.setPid(savedPatient.getPid());
+        vo.setPid(savedPatient.getPatientId());
         vo.setPhone(savedUser.getPhone());
+        vo.setName(savedPatient.getName());
+        return vo;
+    }
+
+    @Transactional
+    public AuthUserVO createPatientFile(Integer userId, Patient patientData) {
+        UserAccount user = userAccountRepository.findById(userId)
+            .orElseThrow(() -> new BusinessException(404, "用户不存在"));
+        
+        if (user.getPatientId() != null && user.getPatientId() > 0) {
+             throw new BusinessException(400, "该用户已存在档案");
+        }
+
+        // Save Patient
+        patientData.setPhone(user.getPhone()); // Ensure phone matches
+        Patient savedPatient = patientRepository.save(patientData);
+
+        // Update User
+        user.setPatientId(savedPatient.getPatientId());
+        userAccountRepository.save(user);
+
+        // Return updated VO
+        AuthUserVO vo = new AuthUserVO();
+        vo.setUserId(user.getUserId());
+        vo.setPid(savedPatient.getPatientId());
+        vo.setPhone(user.getPhone());
         vo.setName(savedPatient.getName());
         return vo;
     }
@@ -86,15 +113,31 @@ public class AuthService {
             throw new BusinessException(403, "账号不可用");
         }
 
-        Patient patient = patientRepository.findById(user.getPid())
-            .orElseThrow(() -> new BusinessException(404, "患者档案不存在"));
+        // Allow login even if patient record is missing (handle legacy or broken state)
+        // But if pid > 0, we try to fetch it.
+        Patient patient = null;
+        if (user.getPatientId() != null && user.getPatientId() > 0) {
+            patient = patientRepository.findById(user.getPatientId()).orElse(null);
+        }
 
         AuthUserVO vo = new AuthUserVO();
         vo.setUserId(user.getUserId());
-        vo.setPid(patient.getPid());
+        vo.setPid(patient != null ? patient.getPatientId() : 0); // Return 0 if no patient
         vo.setPhone(user.getPhone());
-        vo.setName(patient.getName());
+        vo.setName(patient != null ? patient.getName() : user.getPhone());
         return vo;
     }
-}
 
+    @Transactional
+    public void bindPatient(Integer userId, Integer pid) {
+        UserAccount user = userAccountRepository.findById(userId)
+            .orElseThrow(() -> new BusinessException(404, "用户不存在"));
+        
+        if (!patientRepository.existsById(pid)) {
+            throw new BusinessException(404, "患者档案不存在");
+        }
+        
+        user.setPatientId(pid);
+        userAccountRepository.save(user);
+    }
+}
