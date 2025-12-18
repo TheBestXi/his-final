@@ -3,14 +3,12 @@ setlocal
 
 cd /d "%~dp0"
 
-if not exist "his-frontend\package.json" (
-  echo [ERROR] Cannot find "his-frontend\package.json".
-  echo Please place this script in the repository root folder.
+if not exist "package.json" (
+  echo [ERROR] Cannot find "package.json".
+  echo Please place this script in the his-frontend folder.
   pause
   exit /b 1
 )
-
-cd /d "%~dp0his-frontend"
 
 where node >nul 2>nul
 if errorlevel 1 (
@@ -45,4 +43,3 @@ echo If no error appears, open: http://localhost:5173/
 call npm run dev
 
 pause
-
