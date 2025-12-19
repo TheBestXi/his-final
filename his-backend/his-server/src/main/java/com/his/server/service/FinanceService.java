@@ -100,6 +100,20 @@ public class FinanceService {
         finance.setPaymentStatus("已支付");
         finance.setPaymentTime(LocalDateTime.now());
         
+        // Update prescription status to 1 (To be dispensed)
+        List<Prescription> prescriptions = prescriptionRepository.findByAppointmentId(finance.getAppointmentId());
+        for (Prescription p : prescriptions) {
+            p.setStatus(1);
+            prescriptionRepository.save(p);
+        }
+
+        // Update test status to 1 (Pending Exam)
+        List<Test> tests = testRepository.findByAppointmentId(finance.getAppointmentId());
+        for (Test t : tests) {
+            t.setStatus(1);
+            testRepository.save(t);
+        }
+        
         return financeRepository.save(finance);
     }
 

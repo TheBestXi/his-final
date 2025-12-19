@@ -17,23 +17,27 @@ public class TestService {
     private final TestRepository testRepository;
 
     public List<Test> listByPatient(Integer pid) {
-        return testRepository.findByPatientId(pid);
+        return testRepository.findByPid(pid);
     }
 
     public List<Test> listByAppointment(Integer appointmentId) {
         return testRepository.findByAppointmentId(appointmentId);
     }
 
+    public List<Test> listPending() {
+        return testRepository.findByStatus(1); // 1=已支付/待检查
+    }
+
     @Transactional
     public Test createTest(TestDTO dto) {
         Test test = new Test();
-        test.setPatientId(dto.getPid());
+        test.setPid(dto.getPid());
         test.setDoctorId(dto.getDoctorId());
         test.setAppointmentId(dto.getAppointmentId());
         test.setTestType(dto.getTestType());
         test.setTestFee(dto.getTestFee());
         test.setTestDate(LocalDate.now());
-        test.setStatus(1); // 1=申请中
+        test.setStatus(0); // 0=未支付
         
         return testRepository.save(test);
     }

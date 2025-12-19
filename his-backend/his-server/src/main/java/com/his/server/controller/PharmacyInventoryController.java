@@ -38,7 +38,7 @@ public class PharmacyInventoryController {
     }
 
     @Operation(summary = "发药")
-    @PostMapping("/dispense")
+    @PostMapping("/inventory/dispense")
     public GlobalResult<String> dispense(@RequestParam("prescriptionId") Integer prescriptionId,
                                          @RequestParam("medicineId") Integer medicineId,
                                          @RequestParam("quantity") Integer quantity,

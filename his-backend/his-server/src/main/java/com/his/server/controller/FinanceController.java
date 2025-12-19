@@ -20,7 +20,7 @@ public class FinanceController {
     private final FinanceService financeService;
 
     @Operation(summary = "生成账单")
-    @PostMapping("/appointment/{appointmentId}")
+    @PostMapping("/bill/{appointmentId}")
     public GlobalResult<Finance> generateBill(@PathVariable("appointmentId") Integer appointmentId,
                                               HttpServletRequest request) {
         String discountCode = request.getParameter("discountCode");

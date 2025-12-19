@@ -37,6 +37,12 @@ public class TestController {
         return GlobalResult.success(testService.listByAppointment(appointmentId));
     }
 
+    @Operation(summary = "查询待检查列表")
+    @GetMapping("/pending")
+    public GlobalResult<List<Test>> listPending() {
+        return GlobalResult.success(testService.listPending());
+    }
+
     @Operation(summary = "更新检查状态/结果")
     @PutMapping("/{testId}/status")
     public GlobalResult<Test> updateStatus(@PathVariable("testId") Integer testId,

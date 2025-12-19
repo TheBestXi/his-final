@@ -40,10 +40,30 @@ public class AppointmentController {
         return GlobalResult.success(appointmentService.listByPatient(pid));
     }
 
+    @Operation(summary = "取消挂号")
+    @PostMapping("/{id}/cancel")
+    public GlobalResult<Void> cancel(@PathVariable("id") Integer id) {
+        appointmentService.cancelAppointment(id);
+        return GlobalResult.success(null);
+    }
+
     @Operation(summary = "更新挂号状态")
     @PutMapping("/{id}/status")
     public GlobalResult<Appointment> updateStatus(@PathVariable("id") Integer id,
                                                   @RequestParam("status") Integer status) {
         return GlobalResult.success(appointmentService.updateStatus(id, status));
+    }
+
+    @Operation(summary = "获取候诊队列(医生端)")
+    @GetMapping("/queue")
+    public GlobalResult<java.util.List<Appointment>> getQueue(@RequestParam("doctorId") Integer doctorId) {
+        return GlobalResult.success(appointmentService.listWaitingQueue(doctorId));
+    }
+
+    @Operation(summary = "叫号(医生端)")
+    @PostMapping("/{id}/call")
+    public GlobalResult<Void> callPatient(@PathVariable("id") Integer id) {
+        appointmentService.callPatient(id);
+        return GlobalResult.success(null);
     }
 }

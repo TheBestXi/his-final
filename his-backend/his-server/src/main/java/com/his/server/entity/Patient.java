@@ -9,24 +9,21 @@ import org.hibernate.annotations.Where;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Entity
-@Table(name = "patients", indexes = {
+@Table(name = "ai_patient", indexes = {
     @Index(name = "idx_name", columnList = "name"),
     @Index(name = "idx_is_deleted", columnList = "is_deleted")
 })
-@SQLDelete(sql = "UPDATE patients SET is_deleted = 1 WHERE patient_id = ?")
+@SQLDelete(sql = "UPDATE ai_patient SET is_deleted = 1 WHERE pid = ?")
 @Where(clause = "is_deleted = 0")
 public class Patient extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "patient_id")
-    private Integer patientId;
+    @Column(name = "pid")
+    private Integer pid;
 
     @Column(nullable = false, length = 50)
     private String name;
-
-    @Column(name = "id_card")
-    private String idCard;
 
     @Column(nullable = false)
     private Integer gender; // 1=男, 2=女
@@ -43,8 +40,8 @@ public class Patient extends BaseEntity {
     @Column(name = "medical_history", columnDefinition = "TEXT")
     private String medicalHistory;
 
-    @Column(name = "allergy_history", columnDefinition = "TEXT")
-    private String allergyHistory;
+    @Column(name = "allergy", columnDefinition = "TEXT") // 缩写
+    private String allergy;
 
     @Column(name = "is_deleted", nullable = false)
     private Integer isDeleted = 0;

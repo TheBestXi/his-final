@@ -9,7 +9,7 @@ import lombok.EqualsAndHashCode;
 @Entity
 @Table(name = "user_accounts", indexes = {
     @Index(name = "idx_phone", columnList = "phone"),
-    @Index(name = "idx_patient_id", columnList = "patient_id")
+    @Index(name = "idx_pid", columnList = "pid")
 })
 public class UserAccount extends BaseEntity {
 
@@ -18,8 +18,14 @@ public class UserAccount extends BaseEntity {
     @Column(name = "user_id")
     private Integer userId;
 
-    @Column(name = "patient_id", nullable = false)
-    private Integer patientId;
+    @Column(name = "pid")
+    private Integer pid;
+
+    @Column(name = "doctor_id")
+    private Integer doctorId;
+
+    @Column(nullable = false, length = 20)
+    private String role = "ROLE_PATIENT";
 
     @Column(nullable = false, length = 20, unique = true)
     private String phone;

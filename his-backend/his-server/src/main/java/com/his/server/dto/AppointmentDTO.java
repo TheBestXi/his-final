@@ -10,7 +10,7 @@ public class AppointmentDTO {
     private Integer pid;
     private Integer doctorId;
     private String department;
+    private Integer scheduleId;
     private LocalDate registrationDate;
-    private String timeSlot;
     private BigDecimal registrationFee;
 }

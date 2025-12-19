@@ -37,4 +37,16 @@ public class StatisticsController {
     public GlobalResult<List<Map<String, Object>>> getTopDoctors() {
         return GlobalResult.success(statisticsService.getTopDoctors());
     }
+
+    @Operation(summary = "挂号统计(兼容接口)")
+    @GetMapping("/registration")
+    public GlobalResult<Map<String, Object>> getRegistrationStats() {
+        return GlobalResult.success(statisticsService.getDailyStats());
+    }
+
+    @Operation(summary = "医生工作量(兼容接口)")
+    @GetMapping("/doctor/workload")
+    public GlobalResult<List<Map<String, Object>>> getDoctorWorkload() {
+        return GlobalResult.success(statisticsService.getTopDoctors());
+    }
 }

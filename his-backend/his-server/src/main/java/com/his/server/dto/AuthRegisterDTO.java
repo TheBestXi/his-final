@@ -7,7 +7,6 @@ public class AuthRegisterDTO {
     private String phone;
     private String password;
     private String name;
-    private String idCard;
     private Integer gender;
     private Integer age;
     private String address;

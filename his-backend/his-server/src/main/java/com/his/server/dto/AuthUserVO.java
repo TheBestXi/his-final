@@ -8,6 +8,7 @@ public class AuthUserVO {
     private Integer pid;
     private String phone;
     private String name;
+    private String role;
     private String token;
 }
 

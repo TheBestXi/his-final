@@ -36,4 +36,10 @@ public class MedicalRecordController {
     public GlobalResult<List<MedicalRecord>> listByAppointment(@PathVariable("appointmentId") Integer appointmentId) {
         return GlobalResult.success(medicalRecordService.listByAppointment(appointmentId));
     }
+
+    @Operation(summary = "查询患者历史病历")
+    @GetMapping("/history")
+    public GlobalResult<List<MedicalRecord>> history(@RequestParam("pid") Integer pid) {
+        return GlobalResult.success(medicalRecordService.listByPatient(pid));
+    }
 }
